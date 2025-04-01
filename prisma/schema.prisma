@@ -25,3 +25,24 @@ model user {
   email         String?   @unique
   createdAt     DateTime? @default(now())
 }
+
+model Route {
+  id        Int      @id @default(autoincrement())
+  creator   String
+  start     String
+  end       String
+  startLat  Float
+  startLon  Float
+  endLat    Float
+  endLon    Float
+  places    Place[]
+}
+
+model Place {
+  id        Int     @id @default(autoincrement())
+  routeId   Int
+  name      String
+  longitude Float
+  latitude  Float
+  route     Route   @relation(fields: [routeId], references: [id])
+}

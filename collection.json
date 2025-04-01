@@ -96,7 +96,7 @@
               }
             ],
             "url": {
-              "raw": "http://localhost:2233/geocoding?address=1600 Amphitheatre Parkway, Mountain View, CA",
+              "raw": "http://localhost:2233/api/geocoding?address=1600 Amphitheatre Parkway, Mountain View, CA",
               "protocol": "http",
               "host": ["localhost"],
               "port": "2233",
@@ -104,11 +104,64 @@
               "query": [
                 {
                   "key": "address",
-                  "value": "1600 Amphitheatre Parkway, Mountain View, CA"
+                  "value": "IIIT Kottayam"
                 }
               ]
             },
             "description": "Get coordinates for a given address"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Routes",
+      "item": [
+        {
+          "name": "Save Route",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"creator\": \"user123\",\n    \"start\": \"Mumbai\",\n    \"end\": \"Delhi\",\n    \"startLat\": 19.0760,\n    \"startLon\": 72.8777,\n    \"endLat\": 28.6139,\n    \"endLon\": 77.2090\n}"
+            },
+            "url": {
+              "raw": "http://localhost:2233/api/route/save",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "2233",
+              "path": ["api", "route", "save"]
+            },
+            "description": "Save a new route with coordinates"
+          }
+        },
+        {
+          "name": "Match Route",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"start\": \"Mumbai\",\n    \"end\": \"Delhi\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:2233/api/route/match",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "2233",
+              "path": ["api", "route", "match"]
+            },
+            "description": "Find matching routes between start and end locations"
           }
         }
       ]
