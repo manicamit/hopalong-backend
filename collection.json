@@ -1,0 +1,117 @@
+{
+  "info": {
+    "name": "Hopalong API Collection",
+    "description": "API collection for Hopalong backend services",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Sign Up",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"yourpassword123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:2233/auth/signup",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "2233",
+              "path": ["auth", "signup"]
+            },
+            "description": "Register a new user"
+          }
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"code\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:2233/auth/verify",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "2233",
+              "path": ["auth", "verify"]
+            },
+            "description": "Verify user email with OTP"
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"yourpassword123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:2233/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "2233",
+              "path": ["auth", "login"]
+            },
+            "description": "Login with user credentials"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Geocoding",
+      "item": [
+        {
+          "name": "Get Coordinates",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:2233/geocoding?address=1600 Amphitheatre Parkway, Mountain View, CA",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "2233",
+              "path": ["geocoding"],
+              "query": [
+                {
+                  "key": "address",
+                  "value": "1600 Amphitheatre Parkway, Mountain View, CA"
+                }
+              ]
+            },
+            "description": "Get coordinates for a given address"
+          }
+        }
+      ]
+    }
+  ]
+}

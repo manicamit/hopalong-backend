@@ -1,1 +1,1 @@
-{"root":["./src/server.ts","./src/controllers/authController.ts","./src/routes/authRoutes.ts","./src/utils/generateHash.ts","./src/utils/handleErrors.ts","./src/utils/handleOtp.ts"],"version":"5.7.3"}
+{"root":["./src/server.ts","./src/controllers/authController.ts","./src/controllers/geocodingController.ts","./src/routes/apiRoutes.ts","./src/routes/authRoutes.ts","./src/utils/generateHash.ts","./src/utils/handleErrors.ts","./src/utils/handleOtp.ts"],"version":"5.7.3"}
