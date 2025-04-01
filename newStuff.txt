@@ -1,0 +1,31 @@
+                                PARALLEL ASYNC CALLS STRUCTURE
+
+
+/*  parallel async call saving time: 
+    const tagPromise: Promise<void>[] = newTags?.map(async (tag) => {
+        const obj = await client.tags.create({
+            data : {
+                title : tag
+            }
+        }); 
+        tags.push(obj.id);
+    })
+
+    await Promise.all(tagPromise);*/
+
+/* Inefficient approach; queriyong db to get ids for each eleement
+const tagsIdList = await Promise.all(
+        existingTags.map(async (tag) => {
+            const tagData = await client.tags.findFirst({
+                where :{
+                    title : tag
+                },
+                select : {
+                    id : true
+                }
+            });
+            return tagData?.id;
+        })
+    )
+    const filteredTags = tagsIdList.filter((id) => { id !== undefined});
+*/
