@@ -7,42 +7,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Type {
-  TWITTER
-  YOUTUBE
-  GITHUB
-  REDDIT
-  WEB
-}
-
 model user {
-  id            Int       @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
   firstName     String
   lastName      String
   password      String
-  verified      Boolean   @default(false)
-  session_token String    @default("-1")
-  email         String?   @unique
-  createdAt     DateTime? @default(now())
+  verified      Boolean    @default(false)
+  session_token String     @default("-1")
+  profilePic    String     @default("")
+  email         String?    @unique
+  createdAt     DateTime?  @default(now())
+  RideInfo      RideInfo[]
 }
 
 model Route {
-  id        Int      @id @default(autoincrement())
-  creator   String
-  start     String
-  end       String
-  startLat  Float
-  startLon  Float
-  endLat    Float
-  endLon    Float
-  places    Place[]
+  id       Int     @id @default(autoincrement())
+  creator  String
+  start    String
+  end      String
+  startLat Float
+  startLon Float
+  endLat   Float
+  endLon   Float
+  places   Place[]
 }
 
 model Place {
-  id        Int     @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   routeId   Int
   name      String
   longitude Float
   latitude  Float
-  route     Route   @relation(fields: [routeId], references: [id])
+  route     Route  @relation(fields: [routeId], references: [id])
+}
+
+model RideInfo {
+  id            Int    @id @default(autoincrement())
+  rideId        Int
+  Date          String
+  time          String
+  user          user   @relation(fields: [riderId], references: [id], onDelete: Cascade)
+  riderId       Int
+  startPoint    String
+  endPoint      String
+  totalCost     Int
+  distTravelled Int
+  @@index([rideId])
 }

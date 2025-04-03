@@ -24,6 +24,7 @@ export const signUp = async (req: Request, res: Response) => {
 
       const newUser = await client.user.create({
         data: {
+          profilePic: "https://tqcavgfvflryuqjaemnf.supabase.co/storage/v1/object/public/hopalonguserpics//blue-circle-with-white-user_78370-4707.avif",
           firstName: firstName,
           lastName: lastName,
           email: email,

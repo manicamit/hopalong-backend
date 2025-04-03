@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client";
 const client = new PrismaClient();
 
 export class RouteMatchController {
-  static async saveRoute(req: Request, res: Response) {
+  static async saveRoute(req: any, res: any) {
     const { creator, start, end, category = "amenity" } = req.body; // Default category to 'amenity'
 
     try {
