@@ -10,6 +10,7 @@ app.use(express.json());
 
 app.use("/auth", authRoutes);
 app.use("/api", apiRoutes);
+//app.use("/chat", chatRoutes);
 
 app.listen(2233, () => {
   console.log("Server started at port 2233");

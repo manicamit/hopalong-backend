@@ -20,7 +20,7 @@ export class GeoCodingController {
         return;
       }
 
-      const apiKey = "31818684b71a45abb82218a0ffdcec6d";
+      const apiKey = process.env.GEOAPIFY_API_KEY;
       const filter = "countrycode:in";
       const limit = 1;
       const bias = "proximity:9.754833,76.650099";

@@ -1,12 +1,12 @@
 {
   "info": {
-    "name": "Hopalong API Collection",
-    "description": "API collection for Hopalong backend services",
+    "name": "HopAlong API",
+    "description": "Postman collection for HopAlong backend API routes",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Authentication",
+      "name": "Auth Routes",
       "item": [
         {
           "name": "Sign Up",
@@ -20,7 +20,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"yourpassword123\"\n}"
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\"\n}"
             },
             "url": {
               "raw": "http://localhost:2233/auth/signup",
@@ -28,8 +28,30 @@
               "host": ["localhost"],
               "port": "2233",
               "path": ["auth", "signup"]
+            }
+          }
+        },
+        {
+          "name": "Log In",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\"\n}"
             },
-            "description": "Register a new user"
+            "url": {
+              "raw": "http://localhost:2233/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "2233",
+              "path": ["auth", "login"]
+            }
           }
         },
         {
@@ -44,7 +66,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"code\": \"123456\"\n}"
+              "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"code\": \"123456\"\n}"
             },
             "url": {
               "raw": "http://localhost:2233/auth/verify",
@@ -52,12 +74,16 @@
               "host": ["localhost"],
               "port": "2233",
               "path": ["auth", "verify"]
-            },
-            "description": "Verify user email with OTP"
+            }
           }
-        },
+        }
+      ]
+    },
+    {
+      "name": "API Routes",
+      "item": [
         {
-          "name": "Login",
+          "name": "Geocoding",
           "request": {
             "method": "POST",
             "header": [
@@ -68,25 +94,19 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"yourpassword123\"\n}"
+              "raw": "{\n  \"address\": \"1600 Amphitheatre Parkway, Mountain View, CA\"\n}"
             },
             "url": {
-              "raw": "http://localhost:2233/auth/login",
+              "raw": "http://localhost:2233/api/geocoding",
               "protocol": "http",
               "host": ["localhost"],
               "port": "2233",
-              "path": ["auth", "login"]
-            },
-            "description": "Login with user credentials"
+              "path": ["api", "geocoding"]
+            }
           }
-        }
-      ]
-    },
-    {
-      "name": "Geocoding",
-      "item": [
+        },
         {
-          "name": "Get Coordinates",
+          "name": "Autocomplete",
           "request": {
             "method": "POST",
             "header": [
@@ -95,27 +115,19 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address\": \"Amphitheatre\"\n}"
+            },
             "url": {
-              "raw": "http://localhost:2233/api/geocoding?address=1600 Amphitheatre Parkway, Mountain View, CA",
+              "raw": "http://localhost:2233/api/autocomplete",
               "protocol": "http",
               "host": ["localhost"],
               "port": "2233",
-              "path": ["geocoding"],
-              "query": [
-                {
-                  "key": "address",
-                  "value": "IIIT Kottayam"
-                }
-              ]
-            },
-            "description": "Get coordinates for a given address"
+              "path": ["api", "autocomplete"]
+            }
           }
-        }
-      ]
-    },
-    {
-      "name": "Routes",
-      "item": [
+        },
         {
           "name": "Save Route",
           "request": {
@@ -128,7 +140,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"creator\": \"user123\",\n    \"start\": \"Mumbai\",\n    \"end\": \"Delhi\",\n    \"startLat\": 19.0760,\n    \"startLon\": 72.8777,\n    \"endLat\": 28.6139,\n    \"endLon\": 77.2090\n}"
+              "raw": "{\n  \"creator\": \"user123\",\n  \"start\": \"New York, NY\",\n  \"end\": \"Los Angeles, CA\",\n  \"category\": \"amenity\"\n}"
             },
             "url": {
               "raw": "http://localhost:2233/api/route/save",
@@ -136,8 +148,7 @@
               "host": ["localhost"],
               "port": "2233",
               "path": ["api", "route", "save"]
-            },
-            "description": "Save a new route with coordinates"
+            }
           }
         },
         {
@@ -152,7 +163,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"start\": \"Mumbai\",\n    \"end\": \"Delhi\"\n}"
+              "raw": "{\n  \"start\": \"New York, NY\",\n  \"end\": \"Los Angeles, CA\"\n}"
             },
             "url": {
               "raw": "http://localhost:2233/api/route/match",
@@ -160,8 +171,49 @@
               "host": ["localhost"],
               "port": "2233",
               "path": ["api", "route", "match"]
+            }
+          }
+        },
+        {
+          "name": "All Rides",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:2233/api/route/allrides",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "2233",
+              "path": ["api", "route", "allrides"]
+            }
+          }
+        },
+        {
+          "name": "Particular Ride",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rideId\": 123\n}"
             },
-            "description": "Find matching routes between start and end locations"
+            "url": {
+              "raw": "http://localhost:2233/api/route/particularride",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "2233",
+              "path": ["api", "route", "particularride"]
+            }
           }
         }
       ]

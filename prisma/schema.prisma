@@ -7,50 +7,72 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
-  id            Int        @id @default(autoincrement())
+model User {
+  id            String    @id @default(uuid())
   firstName     String
   lastName      String
   password      String
-  verified      Boolean    @default(false)
-  session_token String     @default("-1")
-  profilePic    String     @default("")
-  email         String?    @unique
-  createdAt     DateTime?  @default(now())
-  RideInfo      RideInfo[]
+  verified      Boolean   @default(false)
+  session_token String    @default("-1")
+  profilePic    String    @default("")
+  email         String?   @unique
+  createdAt     DateTime  @default(now())
+  otp           String?
+  otpExpires    DateTime?
+  
+  // Relations
+  routes        Route[]
+  ownedRides    Ride[]    @relation("RideOwner")
+  ridesMember   Ride[]    @relation("RideMembers")
+  sentMessages  Message[]
 }
 
 model Route {
-  id       Int     @id @default(autoincrement())
-  creator  String
-  start    String
-  end      String
-  startLat Float
-  startLon Float
-  endLat   Float
-  endLon   Float
-  places   Place[]
+  id            String   @id @default(uuid())
+  creatorId     String
+  
+  // Place information
+  startPlaceName String
+  endPlaceName   String
+  startLat       Float
+  startLon       Float
+  endLat         Float
+  endLon         Float
+  distance       Float
+  
+  // Relations
+  creator        User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  primaryForRide Ride?    @relation("PrimaryRoute")
+  memberOfRide   Ride?    @relation("MemberRoutes", fields: [memberRideId], references: [id], onDelete: SetNull)
+  memberRideId   String?
 }
 
-model Place {
-  id        Int    @id @default(autoincrement())
-  routeId   Int
-  name      String
-  longitude Float
-  latitude  Float
-  route     Route  @relation(fields: [routeId], references: [id])
+model Ride {
+  id              String   @id @default(uuid())
+  primaryRouteId  String?  @unique  // One primary route per ride
+  ownerId         String
+  start           DateTime
+  totalCost       Float
+  createdAt       DateTime @default(now())
+  
+  // Relations
+  owner           User     @relation("RideOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  primaryRoute    Route?   @relation("PrimaryRoute", fields: [primaryRouteId], references: [id])
+  members         User[]   @relation("RideMembers")
+  memberRoutes    Route[]  @relation("MemberRoutes")
+  messages        Message[]
 }
 
-model RideInfo {
-  id            Int    @id @default(autoincrement())
-  rideId        Int
-  Date          String
-  time          String
-  user          user   @relation(fields: [riderId], references: [id], onDelete: Cascade)
-  riderId       Int
-  startPoint    String
-  endPoint      String
-  totalCost     Int
-  distTravelled Int
+model Message {
+  id         String   @id @default(uuid())
+  content    String
+  senderId   String
+  rideId     String
+  sentAt     DateTime @default(now())
+  
+  // Relations
+  sender     User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  ride       Ride     @relation(fields: [rideId], references: [id], onDelete: Cascade)
+  
   @@index([rideId])
 }

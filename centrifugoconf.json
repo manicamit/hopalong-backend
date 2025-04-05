@@ -1,0 +1,11 @@
+{
+  "client": {
+    "token": {
+      "hmac_secret_key": "2LUZkgL40CBeeDog/cGneRJ2jy5zM8DJ1Y1P5OteKzs="
+    },
+    "allowed_origins": ["http://localhost:5173"]
+  },
+  "http_api": {
+    "key": "t9h0lTr9WsNItsCwWptr+MyN+kn+pVOZ8kc4Uk2bAvM="
+  }
+}
