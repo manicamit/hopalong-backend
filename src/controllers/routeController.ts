@@ -210,8 +210,26 @@ export class RouteController {
       const ride = await prisma.ride.findUnique({
         where: { id: rideId },
         include: {
-          owner: true,
-          members: true,
+          owner: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              privateFName: true,
+              privateLName: true,
+              privacyLevel: true,
+            },
+          },
+          members: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              privateFName: true,
+              privateLName: true,
+              privacyLevel: true,
+            },
+          },
           primaryRoute: true,
         },
       });
@@ -309,6 +327,9 @@ export class RouteController {
                 id: true,
                 firstName: true,
                 lastName: true,
+                privateFName: true,
+                privateLName: true,
+                privacyLevel: true,
               },
             },
             members: {
@@ -316,6 +337,9 @@ export class RouteController {
                 id: true,
                 firstName: true,
                 lastName: true,
+                privateFName: true,
+                privateLName: true,
+                privacyLevel: true,
               },
             },
             memberRoutes: true,
@@ -356,6 +380,9 @@ export class RouteController {
                   id: true,
                   firstName: true,
                   lastName: true,
+                  privateFName: true,
+                  privateLName: true,
+                  privacyLevel: true,
                 },
               },
               members: {
@@ -363,6 +390,9 @@ export class RouteController {
                   id: true,
                   firstName: true,
                   lastName: true,
+                  privateFName: true,
+                  privateLName: true,
+                  privacyLevel: true,
                 },
               },
               memberRoutes: true,
@@ -374,10 +404,40 @@ export class RouteController {
         updatedRide = updatedRide[2];
       }
 
+      // Process the ride data to respect privacy settings
+      if (!updatedRide) {
+        res.status(404).json({
+          success: false,
+          message: "Unexpected error: Ride not found after update",
+        });
+        return;
+      }
+      const processedRide = {
+        ...updatedRide,
+        owner: {
+          id: updatedRide.owner.id,
+          firstName:
+            updatedRide.owner.privacyLevel > 0
+              ? updatedRide.owner.privateFName
+              : updatedRide.owner.firstName,
+          lastName:
+            updatedRide.owner.privacyLevel > 0
+              ? updatedRide.owner.privateLName
+              : updatedRide.owner.lastName,
+        },
+        members: updatedRide.members.map((member) => ({
+          id: member.id,
+          firstName:
+            member.privacyLevel > 0 ? member.privateFName : member.firstName,
+          lastName:
+            member.privacyLevel > 0 ? member.privateLName : member.lastName,
+        })),
+      };
+
       res.status(200).json({
         success: true,
         message: "Route added to ride successfully",
-        ride: updatedRide,
+        ride: processedRide,
         newRoute,
       });
       return;
@@ -495,14 +555,33 @@ export class RouteController {
               id: true,
               firstName: true,
               lastName: true,
+              privateFName: true,
+              privateLName: true,
+              privacyLevel: true,
             },
           },
         },
       });
 
+      // Process the ride data to respect privacy settings
+      const processedRide = {
+        ...newRide,
+        owner: {
+          id: newRide.owner.id,
+          firstName:
+            newRide.owner.privacyLevel > 0
+              ? newRide.owner.privateFName
+              : newRide.owner.firstName,
+          lastName:
+            newRide.owner.privacyLevel > 0
+              ? newRide.owner.privateLName
+              : newRide.owner.lastName,
+        },
+      };
+
       res.status(201).json({
         success: true,
-        ride: newRide,
+        ride: processedRide,
         message: "Ride created successfully",
       });
       return;

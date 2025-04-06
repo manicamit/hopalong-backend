@@ -157,6 +157,9 @@ class ChatController {
               id: true,
               firstName: true,
               lastName: true,
+              privateFName: true,
+              privateLName: true,
+              privacyLevel: true,
               profilePic: true,
             },
           },
@@ -166,9 +169,23 @@ class ChatController {
         skip: Number(offset),
       });
 
+      // Process messages to respect privacy settings
+      const processedMessages = messages.map((msg) => {
+        const { sender, ...rest } = msg;
+        return {
+          ...rest,
+          sender: {
+            id: sender.id,
+            firstName: sender.privacyLevel > 0 ? sender.privateFName : sender.firstName,
+            lastName: sender.privacyLevel > 0 ? sender.privateLName : sender.lastName,
+            profilePic: sender.profilePic,
+          },
+        };
+      });
+
       res.status(200).json({
         success: true,
-        messages: messages.reverse(), // Return in chronological order
+        messages: processedMessages.reverse(), // Return in chronological order
         message: "Successfully retrieved messages",
       });
       return;
@@ -250,11 +267,25 @@ class ChatController {
               id: true,
               firstName: true,
               lastName: true,
+              privateFName: true,
+              privateLName: true,
+              privacyLevel: true,
               profilePic: true,
             },
           },
         },
       });
+
+      // Apply privacy settings to message before sending to Centrifugo
+      const processedMessage = {
+        ...message,
+        sender: {
+          id: message.sender.id,
+          firstName: message.sender.privacyLevel > 0 ? message.sender.privateFName : message.sender.firstName,
+          lastName: message.sender.privacyLevel > 0 ? message.sender.privateLName : message.sender.lastName,
+          profilePic: message.sender.profilePic,
+        },
+      };
 
       // Send the message to Centrifugo
       const channel = `ride:${rideId}`;
@@ -264,7 +295,7 @@ class ChatController {
           method: "publish",
           params: {
             channel,
-            data: message,
+            data: processedMessage,
           },
         },
         {
@@ -278,7 +309,7 @@ class ChatController {
       res.status(200).json({
         success: true,
         message: "Message sent successfully",
-        data: message,
+        data: processedMessage,
       });
       return;
     } catch (error) {
@@ -328,6 +359,9 @@ class ChatController {
               id: true,
               firstName: true,
               lastName: true,
+              privateFName: true,
+              privateLName: true,
+              privacyLevel: true,
             },
           },
           members: {
@@ -335,6 +369,9 @@ class ChatController {
               id: true,
               firstName: true,
               lastName: true,
+              privateFName: true,
+              privateLName: true,
+              privacyLevel: true,
             },
           },
           messages: {
@@ -346,6 +383,9 @@ class ChatController {
                   id: true,
                   firstName: true,
                   lastName: true,
+                  privateFName: true,
+                  privateLName: true,
+                  privacyLevel: true,
                 },
               },
             },
@@ -356,9 +396,34 @@ class ChatController {
         },
       });
 
+      // Process rides to respect privacy settings
+      const processedRides = rides.map((ride) => {
+        return {
+          ...ride,
+          owner: {
+            id: ride.owner.id,
+            firstName: ride.owner.privacyLevel > 0 ? ride.owner.privateFName : ride.owner.firstName,
+            lastName: ride.owner.privacyLevel > 0 ? ride.owner.privateLName : ride.owner.lastName,
+          },
+          members: ride.members.map((member) => ({
+            id: member.id,
+            firstName: member.privacyLevel > 0 ? member.privateFName : member.firstName,
+            lastName: member.privacyLevel > 0 ? member.privateLName : member.lastName,
+          })),
+          messages: ride.messages.map((msg) => ({
+            ...msg,
+            sender: {
+              id: msg.sender.id,
+              firstName: msg.sender.privacyLevel > 0 ? msg.sender.privateFName : msg.sender.firstName,
+              lastName: msg.sender.privacyLevel > 0 ? msg.sender.privateLName : msg.sender.lastName,
+            },
+          })),
+        };
+      });
+
       res.status(200).json({
         success: true,
-        chats: rides,
+        chats: processedRides,
         message: "Successfully retrieved chats",
       });
       return;

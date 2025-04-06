@@ -65,6 +65,8 @@ export const signUp = async (req: Request, res: Response) => {
           password: hashedPassword,
           otp: otp,
           otpExpires: otpExpires,
+          privateFName: `User${firstName.charAt(0)}`, // Default private name
+          privateLName: `${lastName.charAt(0)}`, // Default private name
         },
         select: {
           id: true,
@@ -204,6 +206,11 @@ export const logIn = async (req: Request, res: Response) => {
       select: {
         password: true,
         verified: true,
+        privacyLevel: true,
+        firstName: true,
+        lastName: true,
+        privateFName: true,
+        privateLName: true,
       },
     });
     console.log(checkUser);
@@ -229,6 +236,11 @@ export const logIn = async (req: Request, res: Response) => {
               payload: {
                 message: "Signed in successfully",
                 token,
+                firstName: checkUser.firstName,
+                lastName: checkUser.lastName,
+                privateFName: checkUser.privateFName,
+                privateLName: checkUser.privateLName,
+                privacyLevel: checkUser.privacyLevel,
               },
             });
           } catch (e) {
@@ -261,6 +273,126 @@ export const logIn = async (req: Request, res: Response) => {
     }
 
     return;
+  } catch (e) {
+    handleError(e, res);
+    return;
+  }
+};
+
+export const updateProfilePic = async (req: Request, res: Response) => {
+  const { token, profilePic } = req.body;
+
+  // Validate required fields
+  if (!token || !profilePic) {
+    res.status(400).json({
+      status: "error",
+      payload: {
+        message: "Token and profile picture URL are required",
+      },
+    });
+    return;
+  }
+
+  try {
+    // Find user by token
+    const user = await client.user.findFirst({
+      where: {
+        session_token: token,
+      },
+    });
+
+    if (!user) {
+      res.status(401).json({
+        status: "error",
+        payload: {
+          message: "Invalid or expired token",
+        },
+      });
+      return;
+    }
+
+    // Update profile picture
+    await client.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        profilePic: profilePic,
+      },
+    });
+
+    res.status(200).json({
+      status: "success",
+      payload: {
+        message: "Profile picture updated successfully",
+      },
+    });
+  } catch (e) {
+    handleError(e, res);
+    return;
+  }
+};
+
+export const updatePrivacyLevel = async (req: Request, res: Response) => {
+  const { token, privacyLevel } = req.body;
+
+  // Validate required fields
+  if (!token || privacyLevel === undefined) {
+    res.status(400).json({
+      status: "error",
+      payload: {
+        message: "Token and privacy level are required",
+      },
+    });
+    return;
+  }
+
+  // Validate privacy level value
+  if (![0, 1, 2].includes(privacyLevel)) {
+    res.status(400).json({
+      status: "error",
+      payload: {
+        message:
+          "Privacy level must be 0 (public), 1 (friends), or 2 (private)",
+      },
+    });
+    return;
+  }
+
+  try {
+    // Find user by token
+    const user = await client.user.findFirst({
+      where: {
+        session_token: token,
+      },
+    });
+
+    if (!user) {
+      res.status(401).json({
+        status: "error",
+        payload: {
+          message: "Invalid or expired token",
+        },
+      });
+      return;
+    }
+
+    // Update privacy level
+    await client.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        privacyLevel: privacyLevel,
+      },
+    });
+
+    res.status(200).json({
+      status: "success",
+      payload: {
+        message: "Privacy level updated successfully",
+      },
+    });
   } catch (e) {
     handleError(e, res);
     return;

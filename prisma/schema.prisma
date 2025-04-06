@@ -21,7 +21,10 @@ model User {
   createdAt     DateTime  @default(now())
   otp           String?
   otpExpires    DateTime?
-  
+  privacyLevel  Int @default(0) // 0: public, 1: friends, 2: private
+  privateFName  String
+  privateLName  String
+
   // Relations
   routes        Route[]
   ownedRides    Ride[]    @relation("RideOwner")

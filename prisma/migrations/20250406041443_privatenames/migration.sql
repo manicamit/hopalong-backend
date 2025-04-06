@@ -11,6 +11,9 @@ CREATE TABLE "User" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "otp" TEXT,
     "otpExpires" TIMESTAMP(3),
+    "privacyLevel" INTEGER NOT NULL DEFAULT 0,
+    "privateFName" TEXT NOT NULL,
+    "privateLName" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -36,8 +39,7 @@ CREATE TABLE "Ride" (
     "id" TEXT NOT NULL,
     "primaryRouteId" TEXT,
     "ownerId" TEXT NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL,
-    "time" TEXT NOT NULL,
+    "start" TIMESTAMP(3) NOT NULL,
     "totalCost" DOUBLE PRECISION NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
