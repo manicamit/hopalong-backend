@@ -7,5 +7,12 @@
   },
   "http_api": {
     "key": "t9h0lTr9WsNItsCwWptr+MyN+kn+pVOZ8kc4Uk2bAvM="
+  },
+  "channel": {
+    "namespaces": [
+      {
+        "name": "ride"
+      }
+    ]
   }
 }

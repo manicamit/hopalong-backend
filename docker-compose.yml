@@ -1,30 +1,63 @@
+version: '3.8'
 
 services:
-  postgres:
-    image: postgres:alpine
-    container_name: postgres
+  app:
+    build: .
+    restart: always
     environment:
-      POSTGRES_USER: your_username
-      POSTGRES_PASSWORD: your_password
-      POSTGRES_DB: your_database
-    ports:
-      - "5432:5432"
+      - GEOAPIFY_API_KEY=31818684b71a45abb82218a0ffdcec6d
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/hopalong
+      - BASE_LINK=http://localhost
+      - EMAIL_USER=amitanand67677@gmail.com
+      - EMAIL_PASS=jhbf zqwe zjep yqvx
+      - EMAIL_SERVICE=gmail
+      - CENTRIFUGO_API_KEY=t9h0lTr9WsNItsCwWptr+MyN+kn+pVOZ8kc4Uk2bAvM=
+      - CENTRIFUGO_URL=ws://centrifugo:8000/connection/websocket
+      - CENTRIFUGO_HTTP_URL=http://centrifugo:8000/api
+      - CENTRIFUGO_TOKEN_HMAC_SECRET=2LUZkgL40CBeeDog/cGneRJ2jy5zM8DJ1Y1P5OteKzs=
+    depends_on:
+      - postgres
+      - centrifugo
+
+  postgres:
+    image: postgres:17-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=hopalong
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U your_username -d your_database"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   adminer:
-    image: adminer
-    container_name: adminer
-    ports:
-      - "8080:8080"
+    image: adminer:latest
+    restart: always
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
+
+  centrifugo:
+    image: centrifugo/centrifugo:latest
+    restart: always
+    volumes:
+      - ./centrifugoconf.json:/centrifugo/config.json
+    command: centrifugo -c config.json
+
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+      - adminer
+      - centrifugo
 
 volumes:
   postgres_data:
+  caddy_data:
+  caddy_config:

@@ -203,10 +203,10 @@ async function getAddressFromCoordinates(
 ): Promise<string> {
   console.log(`Getting address for coordinates: [${coordinates}]`);
   try {
-    const [lon, lat] = coordinates;
+    const [lat, lon] = coordinates;
 
     // Check if coordinates are within IIIT Kottayam campus
-    if (isWithinIIITK(lon, lat)) {
+    if (isWithinIIITK(lat, lon)) {
       console.log("Coordinates match IIIT Kottayam campus");
       return "IIIT Kottayam, Valavoor, Meenachil";
     }
@@ -240,6 +240,48 @@ async function getAddressFromCoordinates(
   } catch (error) {
     console.error("Error getting address:", error);
     return "Error getting address";
+  }
+}
+
+// Function to calculate distance between two points using Geoapify API
+export async function getDistanceBetweenPoints(
+  start: string,
+  end: string
+): Promise<number | null> {
+  console.log(`Calculating distance between ${start} and ${end}`);
+  try {
+    const response = await axios.get(GEOAPIFY_URL, {
+      params: {
+        waypoints: `${start}|${end}`,
+        mode: "drive",
+        apiKey: GEOAPIFY_API_KEY,
+      },
+    });
+
+    if (
+      !response.data ||
+      !response.data.features ||
+      response.data.features.length === 0
+    ) {
+      console.error("Failed to fetch route distance: No features in response");
+      return null;
+    }
+
+    // Extract distance from the route data (in meters)
+    const distanceInMeters =
+      response.data.features[0].properties?.distance || 0;
+
+    // Convert to kilometers
+    const distanceInKm = distanceInMeters / 1000;
+    console.log(`Distance between points: ${distanceInKm.toFixed(2)} km`);
+
+    return distanceInKm;
+  } catch (error) {
+    console.error(
+      "Error fetching route distance:",
+      error instanceof Error ? error.message : String(error)
+    );
+    return null;
   }
 }
 

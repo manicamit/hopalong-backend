@@ -1,0 +1,33 @@
+{
+    # Global options
+    admin off
+}
+
+localhost {
+    # Route /db to adminer
+    handle_path /db* {
+        reverse_proxy adminer:8080
+    }
+
+
+    # Websocket handling for centrifugo
+    # Caddy automatically handles websockets
+    handle_path /connection/websocket* {
+        reverse_proxy centrifugo:8000
+    }
+
+    # Centrifugo API routes
+    handle_path /api* {
+        reverse_proxy centrifugo:8000
+    }
+
+    # Everything else goes to the Express server
+    handle {
+        reverse_proxy app:2233
+    }
+
+    # Enable logging
+    log {
+        output file /var/log/caddy/access.log
+    }
+}
