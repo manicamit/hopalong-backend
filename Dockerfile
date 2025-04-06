@@ -10,8 +10,6 @@ RUN npm install -g ts-node
 # Copy source code
 COPY . .
 
-# Copy .env file as requested
-COPY .env .env
 
 # Install netcat for db connection checking
 RUN apk add --no-cache netcat-openbsd
